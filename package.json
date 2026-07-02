@@ -1,0 +1,24 @@
+{
+  "name": "wmtw-agent",
+  "version": "0.1.0",
+  "description": "Desktop scrobble agent for WhatToWatch — sync local players to your watch history",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun run scripts/build.ts",
+    "build:current": "bun build --compile --minify --sourcemap ./src/index.ts ./src/worker.ts --outfile dist/wmtw-agent",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "webview-bun": "^2.4.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.8.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/reloadlife/wmtw-agent.git"
+  }
+}

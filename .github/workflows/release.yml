@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            target: bun-darwin-arm64
+            artifact: wmtw-agent-macos-arm64
+          - os: macos-latest
+            target: bun-darwin-x64
+            artifact: wmtw-agent-macos-x64
+          - os: ubuntu-latest
+            target: bun-linux-x64
+            artifact: wmtw-agent-linux-x64
+          - os: ubuntu-latest
+            target: bun-linux-arm64
+            artifact: wmtw-agent-linux-arm64
+          - os: windows-latest
+            target: bun-windows-x64
+            artifact: wmtw-agent-windows-x64.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build binary
+        run: |
+          bun build --compile --minify --target=${{ matrix.target }} ./src/index.ts ./src/worker.ts --outfile dist/${{ matrix.artifact }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: dist/${{ matrix.artifact }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true

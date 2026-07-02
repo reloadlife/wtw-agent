@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatToWatch Agent</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f1117;
+      --card: #1a1d27;
+      --border: #2a2f3d;
+      --text: #e8eaef;
+      --muted: #9aa3b2;
+      --accent: #6c8cff;
+      --ok: #3dd68c;
+      --err: #ff6b6b;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    h1 { font-size: 1.25rem; margin: 0 0 4px; }
+    .sub { color: var(--muted); margin: 0 0 20px; font-size: 0.85rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.8rem; }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      margin-bottom: 12px;
+      font: inherit;
+    }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; }
+    button {
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      font: inherit;
+      font-weight: 600;
+    }
+    button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status-grid { display: grid; gap: 8px; font-size: 0.85rem; }
+    .status-grid div { display: flex; justify-content: space-between; gap: 12px; }
+    .status-grid span:last-child { color: var(--muted); text-align: right; }
+    .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+    .dot.ok { background: var(--ok); }
+    .dot.err { background: var(--err); }
+    .dot.idle { background: var(--muted); }
+    .trust {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    a { color: var(--accent); }
+    #toast {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      display: none;
+    }
+    #toast.show { display: block; }
+  </style>
+</head>
+<body>
+  <h1>WhatToWatch Agent</h1>
+  <p class="sub">Sync local playback to your watch history. Open source — only talks to your webhook.</p>
+
+  <div class="card">
+    <label for="endpoint">Site URL</label>
+    <input id="endpoint" placeholder="https://whattowatch.app" />
+
+    <label for="token">Webhook token</label>
+    <input id="token" placeholder="From Settings → Connected services → Local" />
+
+    <label for="mpvSocket">MPV socket path</label>
+    <input id="mpvSocket" placeholder="~/.config/mpv/socket" />
+
+    <div class="row">
+      <button class="primary" id="save">Save</button>
+      <button id="test">Send test</button>
+      <button id="toggle">Pause</button>
+    </div>
+    <p class="trust">
+      Get your token at <strong>Settings → Connected services → Add Local</strong>.
+      <br />
+      <a href="https://github.com/reloadlife/wmtw-agent" target="_blank" rel="noopener">View source on GitHub</a>
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="status-grid" id="status"></div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => {
+      const el = $("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(() => el.classList.remove("show"), 3000);
+    };
+
+    async function load() {
+      const res = await fetch("/api/status");
+      const { config, status } = await res.json();
+      $("endpoint").value = config.endpoint || "";
+      $("token").value = config.token || "";
+      $("mpvSocket").value = config.mpvSocket || "";
+      $("toggle").textContent = status.running ? "Pause" : "Resume";
+
+      const mpvDot = status.mpvConnected ? "ok" : "idle";
+      const runDot = status.running ? "ok" : "idle";
+      $("status").innerHTML = `
+        <div><span><span class="dot ${runDot}"></span>Agent</span><span>${status.running ? "Running" : "Paused"}</span></div>
+        <div><span><span class="dot ${mpvDot}"></span>MPV</span><span>${status.mpvConnected ? "Connected" : "Not found"}</span></div>
+        <div><span>Now playing</span><span>${status.lastTitle || "—"}</span></div>
+        <div><span>Progress</span><span>${status.lastProgress != null ? Math.round(status.lastProgress) + "%" : "—"}</span></div>
+        <div><span>Last sent</span><span>${status.lastSent ? new Date(status.lastSent).toLocaleTimeString() : "—"}</span></div>
+        <div><span>Last error</span><span style="color:${status.lastError ? "var(--err)" : "var(--muted)"}">${status.lastError || "—"}</span></div>
+      `;
+    }
+
+    $("save").onclick = async () => {
+      await fetch("/api/config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: $("endpoint").value.trim(),
+          token: $("token").value.trim(),
+          mpvSocket: $("mpvSocket").value.trim(),
+        }),
+      });
+      toast("Settings saved");
+      load();
+    };
+
+    $("test").onclick = async () => {
+      const res = await fetch("/api/test", { method: "POST" });
+      const data = await res.json();
+      toast(data.message);
+      load();
+    };
+
+    $("toggle").onclick = async () => {
+      const res = await fetch("/api/status");
+      const { status } = await res.json();
+      await fetch(status.running ? "/api/stop" : "/api/start", { method: "POST" });
+      load();
+    };
+
+    load();
+    setInterval(load, 3000);
+  </script>
+</body>
+</html>
