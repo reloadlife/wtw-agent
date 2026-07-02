@@ -2,11 +2,11 @@
 
 Open-source desktop agent for [WhatToWatch](https://whattowatch.app). Syncs local media player playback (MPV today; more players planned) to your personal watch history via webhooks.
 
-**Privacy:** The agent only sends playback events to the webhook URL you configure. No third-party analytics. [Full source code](https://github.com/reloadlife/wmtw-agent) is available for review.
+**Privacy:** The agent only sends playback events to the webhook URL you configure. No third-party analytics. [Full source code](https://github.com/mamaru-a/wmtw-agent) is available for review.
 
 ## Download
 
-Pre-built binaries are published on [GitHub Releases](https://github.com/reloadlife/wmtw-agent/releases):
+Pre-built binaries are published on [GitHub Releases](https://github.com/mamaru-a/wmtw-agent/releases), or from [whattowatch.app/agent](https://whattowatch.app/agent):
 
 | Platform | File |
 |----------|------|
