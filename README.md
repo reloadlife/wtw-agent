@@ -1,20 +1,20 @@
-# WMTW Agent
+# WTW Agent
 
 Open-source desktop agent for [WhatToWatch](https://whattowatch.app). Syncs local media player playback (MPV today; more players planned) to your personal watch history via webhooks.
 
-**Privacy:** The agent only sends playback events to the webhook URL you configure. No third-party analytics. [Full source code](https://github.com/reloadlife/wmtw-agent) is available for review.
+**Privacy:** The agent only sends playback events to the webhook URL you configure. No third-party analytics. [Full source code](https://github.com/reloadlife/wtw-agent) is available for review.
 
 ## Download
 
-Pre-built binaries are published on [GitHub Releases](https://github.com/reloadlife/wmtw-agent/releases), or from [whattowatch.app/agent](https://whattowatch.app/agent):
+Pre-built binaries are published on [GitHub Releases](https://github.com/reloadlife/wtw-agent/releases), or from [whattowatch.app/agent](https://whattowatch.app/agent):
 
 | Platform | File |
 |----------|------|
-| macOS (Apple Silicon) | `wmtw-agent-macos-arm64` |
-| macOS (Intel) | `wmtw-agent-macos-x64` |
-| Linux x64 | `wmtw-agent-linux-x64` |
-| Linux ARM64 | `wmtw-agent-linux-arm64` |
-| Windows x64 | `wmtw-agent-windows-x64.exe` |
+| macOS (Apple Silicon) | `wtw-agent-macos-arm64` |
+| macOS (Intel) | `wtw-agent-macos-x64` |
+| Linux x64 | `wtw-agent-linux-x64` |
+| Linux ARM64 | `wtw-agent-linux-arm64` |
+| Windows x64 | `wtw-agent-windows-x64.exe` |
 
 On macOS, you may need to right-click → Open the first time (unsigned binary).
 
@@ -26,7 +26,7 @@ On macOS, you may need to right-click → Open the first time (unsigned binary).
 4. Click **Send test** to verify
 5. Configure MPV to use a JSON IPC socket (see below)
 
-Config is stored at `~/.config/wmtw-agent/config.json`.
+Config is stored at `~/.config/wtw-agent/config.json`.
 
 ## MPV
 
@@ -63,7 +63,7 @@ Install [Microsoft Edge WebView2](https://developer.microsoft.com/microsoft-edge
 
 ```mermaid
 flowchart LR
-  MPV[MPV player] -->|IPC socket| Agent[WMTW Agent]
+  MPV[MPV player] -->|IPC socket| Agent[WTW Agent]
   Agent -->|HTTPS POST| Webhook["/api/webhook/scrobble/token"]
   Webhook --> WMTW[WhatToWatch]
 ```

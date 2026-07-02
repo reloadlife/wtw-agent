@@ -173,4 +173,4 @@ const server = Bun.serve({
 config = await loadConfig();
 startPolling();
 
-console.log(`WMTW Agent API listening on http://127.0.0.1:${server.port}`);
+console.log(`WTW Agent API listening on http://127.0.0.1:${server.port}`);

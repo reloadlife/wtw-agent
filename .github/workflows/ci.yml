@@ -20,4 +20,4 @@ jobs:
 
       - name: Build Linux binary (smoke test)
         run: |
-          bun build --compile --minify --target=bun-linux-x64 ./src/index.ts ./src/worker.ts --outfile dist/wmtw-agent-linux-x64
+          bun build --compile --minify --target=bun-linux-x64 ./src/index.ts ./src/worker.ts --outfile dist/wtw-agent-linux-x64

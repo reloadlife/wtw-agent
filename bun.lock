@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "wmtw-agent",
+      "name": "wtw-agent",
       "dependencies": {
         "webview-bun": "^2.4.0",
       },

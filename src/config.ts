@@ -8,7 +8,7 @@ export type AgentConfig = {
 	pollIntervalMs: number;
 };
 
-const CONFIG_DIR = join(homedir(), ".config", "wmtw-agent");
+const CONFIG_DIR = join(homedir(), ".config", "wtw-agent");
 const CONFIG_PATH = join(CONFIG_DIR, "config.json");
 
 export const DEFAULT_CONFIG: AgentConfig = {

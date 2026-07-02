@@ -1,17 +1,17 @@
 #!/usr/bin/env bun
 /**
- * Cross-compile WMTW Agent for all major desktop targets.
+ * Cross-compile WTW Agent for all major desktop targets.
  * Run on macOS to produce darwin + linux + windows binaries.
  */
 
 import { mkdirSync } from "node:fs";
 
 const targets = [
-	{ target: "bun-darwin-arm64", out: "wmtw-agent-macos-arm64" },
-	{ target: "bun-darwin-x64", out: "wmtw-agent-macos-x64" },
-	{ target: "bun-linux-x64", out: "wmtw-agent-linux-x64" },
-	{ target: "bun-linux-arm64", out: "wmtw-agent-linux-arm64" },
-	{ target: "bun-windows-x64", out: "wmtw-agent-windows-x64.exe" },
+	{ target: "bun-darwin-arm64", out: "wtw-agent-macos-arm64" },
+	{ target: "bun-darwin-x64", out: "wtw-agent-macos-x64" },
+	{ target: "bun-linux-x64", out: "wtw-agent-linux-x64" },
+	{ target: "bun-linux-arm64", out: "wtw-agent-linux-arm64" },
+	{ target: "bun-windows-x64", out: "wtw-agent-windows-x64.exe" },
 ] as const;
 
 mkdirSync("dist", { recursive: true });

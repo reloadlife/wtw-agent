@@ -15,19 +15,19 @@ jobs:
         include:
           - os: macos-latest
             target: bun-darwin-arm64
-            artifact: wmtw-agent-macos-arm64
+            artifact: wtw-agent-macos-arm64
           - os: macos-latest
             target: bun-darwin-x64
-            artifact: wmtw-agent-macos-x64
+            artifact: wtw-agent-macos-x64
           - os: ubuntu-latest
             target: bun-linux-x64
-            artifact: wmtw-agent-linux-x64
+            artifact: wtw-agent-linux-x64
           - os: ubuntu-latest
             target: bun-linux-arm64
-            artifact: wmtw-agent-linux-arm64
+            artifact: wtw-agent-linux-arm64
           - os: windows-latest
             target: bun-windows-x64
-            artifact: wmtw-agent-windows-x64.exe
+            artifact: wtw-agent-windows-x64.exe
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
